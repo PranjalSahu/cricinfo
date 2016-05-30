@@ -5,13 +5,19 @@ start_num = 980901
 
 base_url = 'http://www.espncricinfo.com'
 base_str = 'http://www.espncricinfo.com/indian-premier-league-2016/engine/match/'
-end_str = '.html?view=wickets'
+end_stra = '.html?view=wickets'
+end_strb = '.html'
 num = 40
 
 num.times {
   begin
-    a = open(base_str+start_num.to_s+end_str)
+    
+    a = open(base_str+start_num.to_s+end_stra)
+    b = open(base_str+start_num.to_s+end_strb)
+
     File.open("/Users/pranjalsahu/cricketdata/#{start_num.to_s}", "w") { |file| file.write a.read}
+    File.open("/Users/pranjalsahu/cricketdata/#{start_num.to_s}_home", "w") { |file| file.write b.read}
+    
     start_num = start_num+2
     puts "File downloaded #{start_num}"
   rescue
@@ -58,20 +64,31 @@ end
 
 all_events = []
 overs_text = {}
+player_names = {}
+
+def get_events(filename)
+  file = File.open(filename, "rb")
+  contents = file.read
+  events = Nokogiri::HTML.parse contents
+end
 
 Dir.glob("/Users/pranjalsahu/cricketdata/98*") do |my_text_file|
 
-  if my_text_file.include?("batsman") or my_text_file.include?("bowler")
-    filename = my_text_file.split("/")[-1]
-    arr = filename.split("_")
-    matchid  = arr[0]
+  if my_text_file.include?("_home")
+
+    # GETTING PLAYER NAMES
+    events = get_events(my_text_file)
+    events.css('td.batsman-name').css('a').map{|t| player_names[t.text.strip] = t["href"]}
+    events.css('td.bowler-name').css('a').map{|t| player_names[t.text.strip] = t["href"]}
+
+  elsif (my_text_file.include?("batsman") or my_text_file.include?("bowler"))
+    filename    = my_text_file.split("/")[-1]
+    arr         = filename.split("_")
+    matchid     = arr[0]
     player_type = arr[1]
-    id = arr[2]
+    id          = arr[2]
 
-    file = File.open(my_text_file, "rb")
-    contents = file.read
-
-    events = Nokogiri::HTML.parse contents
+    events = get_events(my_text_file)
     commentary_events = events.css('div.commentary-section').css('div.commentary-event')
 
     commentary_events.each do |event|
@@ -108,12 +125,37 @@ Dir.glob("/Users/pranjalsahu/cricketdata/98*") do |my_text_file|
   end
 end
 
+
 all_events = []
 overs_text.values.each do |t|
   all_events << t.values
 end
 
 all_events = all_events.flatten(1)
+
+# DOWNLOAD ALL PLAYERS PROFILES
+player_names.each do |key, value|
+  begin
+    a = open(base_url+value)
+    player_id = value.split("/")[-1][/\d+/]
+    File.open("/Users/pranjalsahu/cricketdata/player_#{player_id.to_s}", "w") { |file| file.write a.read}
+    puts "File downloaded #{player_id.to_s}"
+  rescue
+  end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

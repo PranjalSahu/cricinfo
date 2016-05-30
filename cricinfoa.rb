@@ -170,6 +170,6 @@ end
 
 
 
-
+rails g scaffold Event batsman_id:integer bowler_id:integer run:integer comment:string  important:string  over:string match_id:integer
 
 

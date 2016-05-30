@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Batsman:</strong>
+  <%= @event.batsman_id %>
+</p>
+
+<p>
+  <strong>Bowler:</strong>
+  <%= @event.bowler_id %>
+</p>
+
+<p>
+  <strong>Run:</strong>
+  <%= @event.run %>
+</p>
+
+<p>
+  <strong>Comment:</strong>
+  <%= @event.comment %>
+</p>
+
+<p>
+  <strong>Important:</strong>
+  <%= @event.important %>
+</p>
+
+<p>
+  <strong>Over:</strong>
+  <%= @event.over %>
+</p>
+
+<p>
+  <strong>Match:</strong>
+  <%= @event.match_id %>
+</p>
+
+<%= link_to 'Edit', edit_event_path(@event) %> |
+<%= link_to 'Back', events_path %>

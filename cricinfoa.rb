@@ -148,6 +148,21 @@ end
 
 
 
+players = []
+Dir.glob("/Users/pranjalsahu/cricketdata/player_*") do |my_text_file|
+  events = get_events(my_text_file)
+  text = events.css("div.ciPlayernametxt").text
+  name, team = text.split("\t")
+  name = name.strip.squish
+  team = team.strip.squish
+  players << [name, team]
+end
+
+players = player.uniq
+
+players.each do |t|
+Player.create(name: t[0], country: t[1])
+end
 
 
 
@@ -165,10 +180,7 @@ end
 
 
 
-
-
-
-
+rails g scaffold model Player name:string country:string
 
 rails g scaffold Event batsman_id:integer bowler_id:integer run:integer comment:string  important:string  over:string match_id:integer
 

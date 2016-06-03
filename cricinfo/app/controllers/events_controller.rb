@@ -5,6 +5,11 @@ class EventsController < ApplicationController
   # GET /events.json
   def index
     @events = Event.all
+    @events = @events.where(bowler_id: params[:bowler_id]) if params[:bowler_id].present?
+    @events = @events.where(batsman_id: params[:batsman_id]) if params[:batsman_id].present?
+    @events = @events.where(important: params[:important]) if params[:important].present?
+    @events = @events.where(match_id: params[:match_id]) if params[:match_id].present?
+    @events = @events.where(run: params[:run]) if params[:run].present?
   end
 
   # GET /events/1

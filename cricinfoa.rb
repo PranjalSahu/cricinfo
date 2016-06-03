@@ -155,10 +155,10 @@ Dir.glob("/Users/pranjalsahu/cricketdata/player_*") do |my_text_file|
   name, team = text.split("\t")
   name = name.strip.squish
   team = team.strip.squish
-  players << [name, team]
+  image_path = events.xpath('//meta').select{|t| t.attributes["property"].present? and t.attributes["property"].content == "og:image"}.last["content"]
+  id = my_text_file.split("_")[1].to_i
+  players << [id, name, team, image_path]
 end
-
-players = player.uniq
 
 players.each do |t|
 Player.create(name: t[0], country: t[1])

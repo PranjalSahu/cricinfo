@@ -10,6 +10,13 @@ class EventsController < ApplicationController
     @events = @events.where(important: params[:important]) if params[:important].present?
     @events = @events.where(match_id: params[:match_id]) if params[:match_id].present?
     @events = @events.where(run: params[:run]) if params[:run].present?
+    filter_on_country
+  end
+
+  def filter_on_country
+    @events = @events.joins("inner join players as bowler_players on bowler_players.id = events.bowler_id").where("bowler_players.country = ?", params[:bowler_country]) if params[:bowler_country].present?
+    @events = @events.joins("inner join players as batsman_players on batsman_players.id = events.batsman_id").where("batsman_players.country = ?", params[:batsman_country]) if params[:batsman_country].present?
+    @events
   end
 
   # GET /events/1

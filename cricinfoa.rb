@@ -156,12 +156,18 @@ Dir.glob("/Users/pranjalsahu/cricketdata/player_*") do |my_text_file|
   name = name.strip.squish
   team = team.strip.squish
   image_path = events.xpath('//meta').select{|t| t.attributes["property"].present? and t.attributes["property"].content == "og:image"}.last["content"]
-  id = my_text_file.split("_")[1].to_i
-  players << [id, name, team, image_path]
+  scripts    = events.css("script")
+  puts my_text_file
+  id =  scripts.select{|t| t.text.include?("fcGetPlayerInsight")}.last.try(:text).try(:strip).to_s[/\d+/].to_s
+  if id.present?
+    players << [id, name, team, image_path]
+  end
 end
 
+
+
 players.each do |t|
-Player.create(name: t[0], country: t[1])
+Player.create(id: t[0], name: t[1], country: t[2], image_url: t[3])
 end
 
 
